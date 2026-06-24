@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Portfolio</title>
+  <style>
+    /* Reset and Core Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    /* Full Page Dark Blue Background with Spotlight Reveal */
+    body {
+      background-color: #030712; /* Deep dark blue-black base */
+      /* Radial gradient centered dynamically on the --mouse-x and --mouse-y CSS variables */
+      background-image: radial-gradient(
+        600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+        rgba(29, 78, 216, 0.25), /* Bright blue ambient glow */
+        transparent 80%
+      );
+      background-attachment: fixed; /* Lock background during scroll */
+      color: #f3f4f6;
+      line-height: 1.6;
+    }
+    
+    /* Navigation Bar */
+    nav {
+      background: rgba(3, 7, 18, 0.8);
+      padding: 20px 10%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #3b82f6;
+    }
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+    nav ul li {
+      margin-left: 20px;
+    }
+    nav ul li a {
+      text-decoration: none;
+      color: #9ca3af;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav ul li a:hover {
+      color: #3b82f6;
+    }
+
+    /* Hero Section (Introduction) */
+    header {
+      padding: 80px 10% 40px 10%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    header .profile-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+      border: 2px solid rgba(59, 130, 246, 0.3);
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+    header p {
+      font-size: 1.2rem;
+      color: #9ca3af;
+      max-width: 600px;
+    }
+
+    /* Sections Shared Styling */
+    section {
+      padding: 60px 10%;
+    }
+    section h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      position: relative;
+      display: inline-block;
+      color: #ffffff;
+    }
+    section h2::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -5px;
+      width: 50%;
+      height: 3px;
+      background-color: #3b82f6;
+    }
+
+    /* Dark Mode Projects Grid Layout */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1max));
+      gap: 30px;
+    }
+    .project-card {
+      background: rgba(17, 24, 39, 0.7); /* Semi-transparent dark cards */
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .project-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    .project-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+    .project-info {
+      padding: 20px;
+    }
+    .project-info h3 {
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+    .project-info p {
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+
+    /* Ambient Music Disk Controller */
+    .music-widget {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(17, 24, 39, 0.8);
+      padding: 8px 15px 8px 8px;
+      border-radius: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .disk-btn {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      border-radius: 50%;
+      width: 55px;
+      height: 55px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .disk-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #3b82f6;
+    }
+    .music-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #f3f4f6;
+      pointer-events: none;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .disk-img.spinning {
+      animation: spin 4s linear infinite;
+    }
+
+    /* Footer */
+    footer {
+      background: rgba(17, 24, 39, 0.9);
+      color: #9ca3af;
+      text-align: center;
+      padding: 30px 10%;
+      margin-top: 40px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+  </style>
+</head>
+<body>
+<canvas id="spiderCanvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 101;"></canvas>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="logo">MyPortfolio.</div>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero Section -->
+  <header>
+    <img src="killua.jpg" alt="Your Profile Picture" class="profile-img">
+    <h1>Hello, I'm Ismail Ibrahim</h1>
+    <p>I am a creative developer who builds clean, functional, and interactive web experiences. Welcome to my personal space on the web.</p>
+  </header>
+
+   <!-- About Section -->
+  <section id="about">
+    <h2>About Me</h2>
+    <p>
+      I am an ambitious <strong>Information Science student</strong> with a deep passion for clean architecture, software engineering, and system development. Recognized as an outstanding student for my technical focus and analytical approach, I thrive at the intersection of data management and modern web engineering. 
+    </p>
+    <p style="margin-top: 15px;">
+      My coding journey is fueled by a curiosity to transform unorganized datasets into high-performance, interactive user experiences. When I am not optimizing algorithms or debugging JavaScript, I focus on mastering information retrieval models, database tuning, and frontend technologies to build products that solve real-world problems.
+    </p>
+  </section>
+
+
+    <!-- Projects Section -->
+  <section id="projects">
+    <h2>Featured Work</h2>
+    <div class="projects-grid">
+      
+      <!-- Project 1: Canvas Sketch App (Custom Request) -->
+      <div class="project-card">
+        <!-- Creative Digital Canvas Art / Drawing Tech Concept Image -->
+        <img src="grafitti1.jpg" alt="PixelSketch Community Platform" class="project-img">
+        <div class="project-info">
+          <h3>Sketch-Verse : Collaborative Drawing Platform</h3>
+          <p style="margin-bottom: 12px;">
+            An interactive web application featuring a highly responsive HTML5 Canvas drawing board. Users can create digital sketch art, post their creations to a global public community board, rate other users' work with a live upvoting metric system, and instantly share drawings via unique web links.
+          </p>
+          <span style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
+            HTML5 Canvas / Vanilla JS / Node.js / MongoDB
+          </span>
+        </div>
+      </div>
+
+      <!-- Project 2: Retro Snake Game (Custom Request) -->
+      <div class="project-card">
+        <!-- Arcade/Retro Gaming Aesthetics Concept Image -->
+        <img src="snake1.jpg" alt="Retro Snake Game Dashboard" class="project-img">
+        <div class="project-info">
+          <h3>ViperGrid: Classic Arcade Snake Game</h3>
+          <p style="margin-bottom: 12px;">
+            A retro-styled arcade game built entirely from scratch to practice core algorithmic logic. Features localized grid collision algorithms, an incremental speed difficulty curve system, high-score memory storage tracking across browser cache refreshes, and dynamic fluid snake segment rendering.
+          </p>
+          <span style="font-size: 0.8rem; background: rgba(59, 130, 246, 0.2); color: #3b82f6; padding: 4px 8px; border-radius: 4px; font-weight: bold;">
+            JavaScript (ES6) / CSS Flexbox / LocalStorage API
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- Floating Audio Element & Disk Widget -->
+  <audio id="portfolioAudio" src="mi mi.mp3"></audio>
+  <div class="music-widget">
+    <button id="audioDiskBtn" class="disk-btn" title="Click to play music">
+      <img src="disk.jpg" alt="Vinyl Record" class="disk-img" id="diskGraphic">
+    </button>
+    <span class="music-text" id="statusText">PLAY MUSIC</span>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2026 Ismail Ibrahim. Built from scratch.</p>
+  </footer>
+
+  <!-- JavaScript Behavior Code -->
+  <script>
+    // 1. Full-Page Cursor Spotlight Tracking Logic
+    window.addEventListener('mousemove', (e) => {
+      // Map the cursor pixel position to viewport percentages
+      const xPercent = (e.clientX / window.innerWidth) * 100;
+      const yPercent = (e.clientY / window.innerHeight) * 100;
+
+      // Update the CSS global variables on the body element
+      document.body.style.setProperty('--mouse-x', `${xPercent}%`);
+      document.body.style.setProperty('--mouse-y', `${yPercent}%`);
+    });
+
+    // 2. Audio Control Logic
+    const audioTrack = document.getElementById('portfolioAudio');
+    const toggleBtn = document.getElementById('audioDiskBtn');
+    const visualDisk = document.getElementById('diskGraphic');
+    const labelText = document.getElementById('statusText');
+
+    toggleBtn.addEventListener('click', () => {
+      if (audioTrack.paused) {
+        audioTrack.play();
+        visualDisk.classList.add('spinning');
+        labelText.textContent = "NOW PLAYING";
+      } else {
+        audioTrack.pause();
+        visualDisk.classList.remove('spinning');
+        labelText.textContent = "MUSIC PAUSED";
+      }
+    });
+
+    audioTrack.addEventListener('ended', () => {
+      visualDisk.classList.remove('spinning');
+      labelText.textContent = "PLAY MUSIC";
+    });
+
+  // --- Interactive Spider & Breakable Cobweb Canvas Engine ---
+const canvas = document.getElementById('spiderCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  initializeWebs(); // Re-calculate web anchor points if screen size shifts
+}
+window.addEventListener('resize', resizeCanvas);
+
+// Mouse State tracking
+const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, prevX: 0, prevY: 0 };
+window.addEventListener('mousemove', (e) => {
+  mouse.prevX = mouse.x;
+  mouse.prevY = mouse.y;
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+  checkWebCollisions(); // Real-time collision check against strands
+});
+
+// Spider Physical Properties
+const spider = {
+  x: window.innerWidth / 2,
+  y: -50, 
+  targetX: window.innerWidth / 2,
+  targetY: 280, 
+  radius: 12,
+  angle: 0,
+  speed: 0.06 
+};
+
+// Cobweb Framework Data Array
+let cobwebs = [];
+
+function initializeWebs() {
+  cobwebs = [];
+  const webDensity = 7; // Number of strands per corner
+
+  // Left Corner Web Strands
+  for (let i = 1; i <= webDensity; i++) {
+    const factor = i / webDensity;
+    cobwebs.push({
+      x1: 0, y1: 150 * factor,      // Anchor point on the left screen wall
+      x2: 150 * (1 - factor), y2: 0, // Anchor point on the top screen ceiling
+      broken: false,
+      alpha: 0.15 // Web transparency
+    });
+  }
+
+  // Right Corner Web Strands
+  for (let i = 1; i <= webDensity; i++) {
+    const factor = i / webDensity;
+    cobwebs.push({
+      x1: window.innerWidth, y1: 150 * factor,
+      x2: window.innerWidth - (150 * (1 - factor)), y2: 0,
+      broken: false,
+      alpha: 0.15
+    });
+  }
+}
+
+// Math function to check if the mouse line cuts through a web strand
+function checkWebCollisions() {
+  cobwebs.forEach(web => {
+    if (web.broken) return;
+
+    // Standard line intersection math formula (Detects if cursor crossed the segment)
+    const x1 = web.x1, y1 = web.y1, x2 = web.x2, y2 = web.y2;
+    const x3 = mouse.prevX, y3 = mouse.prevY, x4 = mouse.x, y4 = mouse.y;
+
+    const denominator = ((x4 - x3) * (y2 - y1)) - ((y4 - y3) * (x2 - x1));
+    if (denominator === 0) return; // Lines are parallel
+
+    const ua = (((x2 - x1) * (y3 - y1)) - ((y2 - y1) * (x3 - x1))) / denominator;
+    const ub = (((x4 - x3) * (y3 - y1)) - ((y4 - y3) * (x3 - x1))) / denominator;
+
+    // If intersection happens within line boundaries, snap the web strand
+    if (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1) {
+      web.broken = true;
+    }
+  });
+}
+
+// Initialize on execution start
+initializeWebs();
+resizeCanvas();
+
+// Core Animation Render Loop
+function animateCanvas() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ----------------------------------------------------
+  // 1. RENDER CORNER COBWEBS
+  // ----------------------------------------------------
+  cobwebs.forEach(web => {
+    if (web.broken) {
+      // Fade out effect after snapping
+      if (web.alpha > 0.01) {
+        web.alpha -= 0.01;
+        ctx.strokeStyle = `rgba(255, 255, 255, ${web.alpha})`;
+        ctx.lineWidth = 1;
+        
+        // Draw drooping snapped ends
+        ctx.beginPath();
+        ctx.moveTo(web.x1, web.y1);
+        ctx.quadraticCurveTo(web.x1 + 10, web.y1 + 15, web.x1 + 5, web.y1 + 30);
+        ctx.moveTo(web.x2, web.y2);
+        ctx.quadraticCurveTo(web.x2 - 15, web.y2 + 10, web.x2 - 30, web.y2 + 5);
+        ctx.stroke();
+      }
+      return;
+    }
+
+    // Normal Intact Web Layout Strand
+    ctx.strokeStyle = `rgba(255, 255, 255, ${web.alpha})`;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(web.x1, web.y1);
+    ctx.lineTo(web.x2, web.y2);
+    ctx.stroke();
+  });
+
+  // ----------------------------------------------------
+  // 2. SPIDER LOGIC & RENDERING
+  // ----------------------------------------------------
+  const dx = mouse.x - spider.x;
+  const dy = mouse.y - spider.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  if (distance < 180) {
+    spider.targetY = 60;
+    spider.targetX = mouse.x > spider.x ? spider.x - 40 : spider.x + 40;
+  } else {
+    spider.targetY = 280; 
+    spider.targetX = mouse.x;
+  }
+
+  spider.x += (spider.targetX - spider.x) * spider.speed;
+  spider.y += (spider.targetY - spider.y) * spider.speed;
+  spider.angle = (spider.targetX - spider.x) * 0.015;
+
+  // Web Drop Marker
+  ctx.save();
+  ctx.shadowBlur = 15;
+  ctx.shadowColor = '#3b82f6'; 
+  const pulseRadius = 6 + Math.sin(Date.now() * 0.005) * 2;
+  ctx.beginPath();
+  ctx.arc(spider.x, 0, pulseRadius, 0, Math.PI, false); 
+  ctx.fillStyle = 'rgba(59, 130, 246, 0.8)';
+  ctx.fill();
+  ctx.restore();
+
+  // Primary Center Hanging Web Thread
+  ctx.beginPath();
+  ctx.moveTo(spider.x, 0); 
+  ctx.lineTo(spider.x, spider.y);
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)'; 
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Spider Core Positioning Rotation
+  ctx.save();
+  ctx.translate(spider.x, spider.y);
+  ctx.rotate(spider.angle);
+
+  // Torso (Pure Black)
+  ctx.beginPath();
+  ctx.arc(0, 0, spider.radius, 0, Math.PI * 2);
+  ctx.fillStyle = '#000000'; 
+  ctx.strokeStyle = '#1a1a1a'; 
+  ctx.lineWidth = 2;
+  ctx.fill();
+  ctx.stroke();
+
+  // Head (Pure Black)
+  ctx.beginPath();
+  ctx.arc(0, spider.radius, spider.radius * 0.5, 0, Math.PI * 2);
+  ctx.fillStyle = '#000000'; 
+  ctx.fill();
+  ctx.stroke();
+
+  // Glowing Red Eyes
+  ctx.save();
+  ctx.shadowBlur = 8;
+  ctx.shadowColor = '#ff0000'; 
+  ctx.beginPath();
+  ctx.arc(-3, spider.radius + 2, 1.7, 0, Math.PI * 2);
+  ctx.arc(3, spider.radius + 2, 1.7, 0, Math.PI * 2);
+  ctx.fillStyle = '#ff0000'; 
+  ctx.fill();
+  ctx.restore();
+
+  // Legs (Dark Charcoal Silhouette)
+  ctx.strokeStyle = '#eff4f0'; 
+  ctx.lineWidth = 2; 
+  
+  for (let i = 0; i < 4; i++) {
+    const jointOffset = (i * 4) - 6;
+    // Left Legs
+    ctx.beginPath();
+    ctx.moveTo(-spider.radius + 2, jointOffset);
+    ctx.quadraticCurveTo(-spider.radius - 15, jointOffset - 10, -spider.radius - 12 + Math.sin(Date.now() * 0.01 + i) * 2, jointOffset + 8);
+    ctx.stroke();
+    // Right Legs
+    ctx.beginPath();
+    ctx.moveTo(spider.radius - 2, jointOffset);
+    ctx.quadraticCurveTo(spider.radius + 15, jointOffset - 10, spider.radius + 12 + Math.sin(Date.now() * 0.01 + i) * 2, jointOffset + 8);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+
+  requestAnimationFrame(animateCanvas);
+}
+
+animateCanvas();
+
+
+  </script>
+</body>
+</html>
